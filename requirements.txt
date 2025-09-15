@@ -1,0 +1,11 @@
+# Core dependencies
+google-genai
+
+# Add other project dependencies here
+# Example:
+# requests>=2.31.0
+# flask>=2.3.0
+# pandas>=2.0.0
+# numpy>=1.24.0
+
+# Development dependencies (install with: pip install -r requirements-dev.txt)
