@@ -1,133 +1,123 @@
-# Hackathon Project - AI Image Generator
+# AI Image Transformer
 
-Welcome to your hackathon project! This is a Python-based AI image generator powered by Google Gemini API.
+Transform images using Google Gemini AI via a simple REST API.
+
+## Features
+
+- 🎨 **AI Image Transformation** - Transform images with text prompts using Google Gemini
+- 🌐 **REST API** - Simple HTTP endpoints for easy integration
+- 📱 **Interactive Docs** - Built-in Swagger UI for testing
+- 🔧 **Easy Setup** - Minimal configuration required
+
+## Quick Start
+
+### 1. Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/vbmudalige/RenoMaster.git
+cd RenoMaster
+
+# Create virtual environment
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# Install dependencies
+pip install -r requirements.txt
+```
+
+### 2. Setup API Key
+
+Get your Google Gemini API key from [Google AI Studio](https://aistudio.google.com/app/apikey)
+
+```bash
+export GEMINI_API_KEY='your-api-key-here'
+```
+
+### 3. Run the API
+
+```bash
+python api.py
+```
+
+The API will be available at `http://localhost:8000`
+
+## API Usage
+
+### Transform Image
+
+**Endpoint:** `POST /transform`
+
+**Parameters:**
+- `image` (file): Input image to transform
+- `prompt` (text): Transformation description
+
+**Example with curl:**
+```bash
+curl -X POST "http://localhost:8000/transform" \
+  -F "image=@your-image.jpg" \
+  -F "prompt=Transform this into a modern living room" \
+  --output result.png
+```
+
+**Example with Python:**
+```python
+import requests
+
+with open('input.jpg', 'rb') as f:
+    response = requests.post(
+        'http://localhost:8000/transform',
+        files={'image': f},
+        data={'prompt': 'Transform into modern living room'}
+    )
+
+with open('output.png', 'wb') as f:
+    f.write(response.content)
+```
+
+### Health Check
+
+**Endpoint:** `GET /health`
+
+Check API status and configuration.
+
+## Interactive Documentation
+
+Visit `http://localhost:8000/docs` for interactive API documentation where you can:
+- Upload images directly
+- Test different prompts
+- Download results
+
+## Example Prompts
+
+- "Transform this into a modern living room using IKEA furniture"
+- "Convert to a minimalist bedroom with white furniture"
+- "Make this a cozy coffee shop interior"
+- "Transform into a professional office space"
 
 ## Project Structure
 
 ```
-hackathon/
-├── main.py              # Main entry point
-├── src/                 # Source code directory
-├── tests/               # Test files
-├── config/              # Configuration files
-├── requirements.txt     # Project dependencies
-├── requirements-dev.txt # Development dependencies
-├── .gitignore          # Git ignore file
-└── README.md           # This file
+├── api.py                 # FastAPI application
+├── main.py               # CLI version (optional)
+├── src/
+│   └── image_generator.py # Core transformation logic
+├── requirements.txt      # Dependencies
+└── README.md            # This file
 ```
 
-## Getting Started
+## Dependencies
 
-### Prerequisites
-
-- Python 3.8 or higher
-- pip (Python package installer)
-
-### Installation
-
-1. **Clone or navigate to the project directory:**
-   ```bash
-   cd hackathon
-   ```
-
-2. **Create a virtual environment (recommended):**
-   ```bash
-   python -m venv venv
-   ```
-
-3. **Activate the virtual environment:**
-   - On macOS/Linux:
-     ```bash
-     source venv/bin/activate
-     ```
-   - On Windows:
-     ```bash
-     venv\Scripts\activate
-     ```
-
-4. **Install dependencies:**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-5. **Set up Google Gemini API:**
-   - Get your API key from [Google AI Studio](https://aistudio.google.com/app/apikey)
-   - Set the environment variable:
-     ```bash
-     export GEMINI_API_KEY='your-api-key-here'
-     ```
-   - On Windows:
-     ```bash
-     set GEMINI_API_KEY=your-api-key-here
-     ```
-
-6. **Install development dependencies (optional):**
-   ```bash
-   pip install -r requirements-dev.txt
-   ```
-
-### Running the Project
-
-Run the AI image generator:
-```bash
-python main.py
-```
-
-The application will:
-1. Check if your GEMINI_API_KEY is set
-2. Prompt you to enter an image description
-3. Generate an image using Google Gemini AI
-4. Save the generated image to your project directory
-
-### Features
-
-- 🎨 **AI Image Generation**: Generate images from text prompts using Google Gemini
-- 🔧 **Modular Design**: Clean separation of concerns with dedicated modules
-- 🛡️ **Error Handling**: Comprehensive error handling and user guidance
-- 📁 **File Management**: Automatic file saving with appropriate extensions
-
-### Development
-
-#### Code Formatting
-```bash
-black .
-```
-
-#### Linting
-```bash
-flake8 .
-```
-
-#### Type Checking
-```bash
-mypy .
-```
-
-#### Running Tests
-```bash
-pytest
-```
-
-## Project Structure Details
-
-- **`main.py`**: The main entry point of your application
-- **`src/`**: Place your main source code here
-- **`tests/`**: Write your tests here
-- **`config/`**: Configuration files and settings
-- **`requirements.txt`**: List your project dependencies here
-- **`requirements-dev.txt`**: Development tools and testing dependencies
-
-## Contributing
-
-1. Create a new branch for your feature
-2. Make your changes
-3. Run tests and linting
-4. Create a pull request
+- `google-genai` - Google Gemini AI SDK
+- `fastapi` - Web framework
+- `uvicorn` - ASGI server
+- `python-multipart` - File upload support
+- `pillow` - Image processing
 
 ## License
 
-This project is open source. Add your license information here.
+Open source project.
 
 ---
 
-**Happy Hacking! 🚀**
+**Happy Transforming! 🎨✨**

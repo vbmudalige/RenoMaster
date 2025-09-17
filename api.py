@@ -1,78 +1,67 @@
 import os
+import sys
 import tempfile
 from fastapi import FastAPI, File, UploadFile, Form, HTTPException
 from fastapi.responses import FileResponse
-import sys
 
 # Add src directory to Python path
 sys.path.append(os.path.join(os.path.dirname(__file__), 'src'))
 
-from image_generator import transform_image
+# Import after path modification
+from image_generator import transform_image  # noqa: E402
 
 app = FastAPI(title="AI Image Transformer", version="1.0.0")
 
 
 @app.get("/")
-async def root():
-    """Health check endpoint."""
-    return {"message": "AI Image Transformer API is running"}
+def root():
+    """API status endpoint."""
+    return {"message": "AI Image Transformer API", "status": "running"}
 
 
 @app.post("/transform")
-async def transform_image_endpoint(
-    image: UploadFile = File(..., description="Input image file"),
-    prompt: str = Form(..., description="Transformation prompt")
+async def transform_image_api(
+    image: UploadFile = File(...),
+    prompt: str = Form(...)
 ):
-    """Transform an image using AI with the given prompt."""
-    
-    # Validate file type
+    """Transform image with AI using text prompt."""
+
+    # Validate image file
     if not image.content_type.startswith('image/'):
-        raise HTTPException(status_code=400, detail="File must be an image")
-    
-    # Create temporary files
-    with tempfile.NamedTemporaryFile(delete=False, suffix='.jpg') as temp_input:
-        # Save uploaded image
+        raise HTTPException(400, "File must be an image")
+
+    # Save uploaded image temporarily
+    with tempfile.NamedTemporaryFile(delete=False, suffix='.jpg') as temp_file:
         content = await image.read()
-        temp_input.write(content)
-        temp_input_path = temp_input.name
-    
+        temp_file.write(content)
+        temp_path = temp_file.name
+
     try:
-        # Transform the image
-        transform_image(temp_input_path, prompt)
-        
-        # Check if output file exists
-        if not os.path.exists("after.png"):
-            raise HTTPException(status_code=500, detail="Image transformation failed")
-        
-        # Return the transformed image
-        return FileResponse(
-            "after.png",
-            media_type="image/png",
-            filename="transformed_image.png"
-        )
-    
+        # Transform image
+        transform_image(temp_path, prompt)
+
+        # Return transformed image
+        if os.path.exists("after.png"):
+            return FileResponse("after.png", media_type="image/png")
+        else:
+            raise HTTPException(500, "Transformation failed")
+
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Transformation error: {str(e)}")
-    
+        raise HTTPException(500, f"Error: {str(e)}")
+
     finally:
-        # Clean up temporary input file
-        if os.path.exists(temp_input_path):
-            os.unlink(temp_input_path)
+        # Cleanup
+        if os.path.exists(temp_path):
+            os.unlink(temp_path)
 
 
 @app.get("/health")
-async def health_check():
-    """Check if the API and dependencies are working."""
-    try:
-        # Check if GEMINI_API_KEY is set
-        api_key = os.environ.get("GEMINI_API_KEY")
-        if not api_key:
-            return {"status": "error", "message": "GEMINI_API_KEY not set"}
-        
-        return {"status": "healthy", "message": "All systems operational"}
-    
-    except Exception as e:
-        return {"status": "error", "message": f"Health check failed: {str(e)}"}
+def health():
+    """Health check endpoint."""
+    api_key = os.environ.get("GEMINI_API_KEY")
+    status = "healthy" if api_key else "error"
+    message = "Ready" if api_key else "GEMINI_API_KEY not set"
+    return {"status": status, "message": message}
 
 
 if __name__ == "__main__":

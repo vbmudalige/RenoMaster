@@ -4,7 +4,8 @@ import os
 # Add src directory to Python path
 sys.path.append(os.path.join(os.path.dirname(__file__), 'src'))
 
-from image_generator import transform_image
+# Import after path modification
+from image_generator import transform_image  # noqa: E402
 
 
 def main():
