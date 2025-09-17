@@ -1,5 +1,9 @@
 # Core dependencies
 google-genai
+fastapi
+uvicorn
+python-multipart
+pillow
 
 # Add other project dependencies here
 # Example:
